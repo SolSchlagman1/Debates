@@ -13,10 +13,12 @@ import { clearFeedPosts, insertFeedPost, listFeedPosts } from './feedDb.js'
 import { getUsageSummary } from './usageCap.js'
 import { ensureNewsTweets } from './newsTweets.js'
 import { ensureDebateAgents } from './seedAgents.js'
+import { ensureFeedSeed } from './feedSeed.js'
 
 dotenv.config({ path: join(dirname(fileURLToPath(import.meta.url)), '..', '.env') })
 
 ensureDebateAgents()
+ensureFeedSeed()
 
 const app = express()
 const PORT = process.env.PORT || 3001

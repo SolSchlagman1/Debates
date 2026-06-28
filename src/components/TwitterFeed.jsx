@@ -475,17 +475,10 @@ export default function TwitterFeed() {
             <h2 className="thread-view-title">Thread</h2>
             <button
               type="button"
-              className="thread-header-btn thread-header-btn--icon"
-              aria-label="Copy link"
-              title="Copy link"
+              className="thread-header-btn"
               onClick={() => handleShareThread(openThreadGroup.root.id)}
             >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  fill="currentColor"
-                  d="M18 7h-1V6a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v7a4 4 0 0 0 4 4h1v-1H7a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v1zm-4 5h1a4 4 0 0 1 4 4v7a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-7a4 4 0 0 1 4-4h1v1H7a3 3 0 0 0-3 3v7a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-7a3 3 0 0 0-3-3h-1v-1z"
-                />
-              </svg>
+              Share
             </button>
           </header>
           <div className="thread-view-body" ref={threadRef}>

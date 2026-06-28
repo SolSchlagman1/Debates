@@ -1707,40 +1707,22 @@
 .tweet-actions {
   display: flex;
   align-items: center;
-  gap: 4px;
-  margin-top: 2px;
-  margin-left: -10px;
+  gap: 20px;
+  margin-top: 12px;
 }
 
-.tweet-action-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
+.tweet-action-link {
   padding: 0;
   border: none;
-  border-radius: 999px;
-  background: transparent;
+  background: none;
   color: #71767b;
+  font-size: 13px;
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
 }
 
-.tweet-action-btn svg {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-}
-
-.tweet-action-btn--reply:hover {
+.tweet-action-link:hover {
   color: #1d9bf0;
-  background: rgba(29, 155, 240, 0.1);
-}
-
-.tweet-action-btn--share:hover {
-  color: #1d9bf0;
-  background: rgba(29, 155, 240, 0.1);
+  text-decoration: underline;
 }
 
 .twitter-toast {

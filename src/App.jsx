@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import TwitterFeed from './components/TwitterFeed'
+import SearchBar from './components/SearchBar'
 import { fetchUsage } from './api/debate'
 import './App.css'
 
 export default function App() {
   const [usage, setUsage] = useState(null)
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     let active = true
@@ -29,7 +31,7 @@ export default function App() {
   return (
     <div className="app app--twitter">
       <header className="twitter-topbar">
-        <h1 className="twitter-logo">Debates</h1>
+        <SearchBar value={searchQuery} onChange={setSearchQuery} />
         {usage?.cap > 0 && (
           <span className={`twitter-usage${usage.capped ? ' twitter-usage--capped' : ''}`}>
             ${usage.spent.toFixed(2)} / ${usage.cap.toFixed(0)}
@@ -38,7 +40,7 @@ export default function App() {
       </header>
 
       <main className="feed feed--twitter">
-        <TwitterFeed />
+        <TwitterFeed searchQuery={searchQuery} />
       </main>
     </div>
   )

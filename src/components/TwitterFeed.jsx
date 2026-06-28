@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import Tweet from './Tweet'
-import ProfilePhotos from './ProfilePhotos'
 import { checkApiHealth, fetchAgentReply, fetchFeed, saveFeedPost } from '../api/debate'
 import { createPost, getParticipant, parseMentions, USER_PARTICIPANT } from '../constants/agentCore'
 import { loadAgentLibrary } from '../utils/agentLibrary'
-import { buildFeedGroups, filterGroupsForAuthor, findRootId, getRootIdForPost, getThreadGroup } from '../utils/feedThreads'
+import { buildFeedGroups, findRootId, getRootIdForPost, getThreadGroup } from '../utils/feedThreads'
 import {
   buildThreadShareUrl,
   buildTweetShareUrl,
@@ -16,12 +15,6 @@ import {
 } from '../utils/shareLinks'
 
 const DEFAULT_TOPIC = 'In the news'
-
-const TABS = [
-  { id: 'all', label: 'Home' },
-  { id: 'marx', label: '@karlmarx' },
-  { id: 'hayek', label: '@FAH' },
-]
 
 function pickDebaters(library) {
   const marx = library.find((a) => /karl marx|^marx$/i.test(a.name))
@@ -45,11 +38,10 @@ function slimAgents(agents) {
   }))
 }
 
-export default function TwitterFeed() {
+export default function TwitterFeed({ searchQuery = '' }) {
   const [agents, setAgents] = useState([])
   const [topic, setTopic] = useState(DEFAULT_TOPIC)
   const [posts, setPosts] = useState([])
-  const [tab, setTab] = useState('all')
   const [draft, setDraft] = useState('')
   const [loading, setLoading] = useState(true)
   const [posting, setPosting] = useState(false)
@@ -58,7 +50,6 @@ export default function TwitterFeed() {
   const [error, setError] = useState(null)
   const [apiOnline, setApiOnline] = useState(true)
   const [openThreadRootId, setOpenThreadRootId] = useState(null)
-  const [showProfiles, setShowProfiles] = useState(false)
   const [shareOk, setShareOk] = useState(null)
   const [shareMissing, setShareMissing] = useState(false)
   const [highlightPostId, setHighlightPostId] = useState(null)
@@ -219,12 +210,6 @@ export default function TwitterFeed() {
     }
   }, [posts.length, pendingId, loading, openThreadRootId])
 
-  async function refreshAgents() {
-    const library = await loadAgentLibrary()
-    const { marx, hayek } = pickDebaters(library)
-    if (marx && hayek) setAgents([marx, hayek])
-  }
-
   async function persistPost(post) {
     await saveFeedPost(post)
     return post
@@ -274,25 +259,6 @@ export default function TwitterFeed() {
     }
   }
 
-  async function handleNextExchange() {
-    if (posting || posts.length === 0) return
-    setError(null)
-    setPosting(true)
-
-    const thread = [...posts]
-    const last = thread[thread.length - 1]
-    const nextId = otherAgentId(agents, last.author)
-
-    try {
-      await requestTweet(nextId, thread, last)
-    } catch (err) {
-      setError(err.message)
-      setApiOnline(await checkApiHealth())
-    } finally {
-      setPosting(false)
-    }
-  }
-
   async function handleUserPost() {
     const text = draft.trim()
     if (!text || posting) return
@@ -324,26 +290,23 @@ export default function TwitterFeed() {
     }
   }
 
-  function handleReset() {
-    if (!confirm('Reset the feed? News tweets will stay saved.')) return
-    setError(null)
-    setLoading(true)
-    fetchFeed()
-      .then((result) => {
-        setPosts(result.posts || [])
-        setTopic(result.topic || DEFAULT_TOPIC)
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false))
-  }
-
-  const marx = agents[0]
-  const hayek = agents[1]
   const postById = Object.fromEntries(posts.map((p) => [p.id, p]))
 
-  let groups = buildFeedGroups(posts)
-  if (tab === 'marx' && marx) groups = filterGroupsForAuthor(groups, marx.id)
-  if (tab === 'hayek' && hayek) groups = filterGroupsForAuthor(groups, hayek.id)
+  function groupMatchesSearch(group) {
+    const query = searchQuery.trim().toLowerCase()
+    if (!query) return true
+
+    return [group.root, ...group.replies].some((post) => {
+      if (post.text.toLowerCase().includes(query)) return true
+      const participant = getParticipant(post.author, agents)
+      if (participant.name.toLowerCase().includes(query)) return true
+      if (participant.handle.toLowerCase().includes(query)) return true
+      if (post.article?.title?.toLowerCase().includes(query)) return true
+      return false
+    })
+  }
+
+  const groups = buildFeedGroups(posts).filter(groupMatchesSearch)
 
   function appendPendingToGroup(group) {
     if (!pendingId || !pendingReplyToId) return group
@@ -421,44 +384,6 @@ export default function TwitterFeed() {
 
   return (
     <div className="twitter-app">
-      <div className="twitter-tabs">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            className={`twitter-tab${tab === t.id ? ' twitter-tab--active' : ''}`}
-            onClick={() => setTab(t.id)}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      <div className="twitter-topic">
-        <p className="twitter-topic-label">Home</p>
-        <h2 className="twitter-topic-text">{topic}</h2>
-        <div className="twitter-topic-actions">
-          <button
-            type="button"
-            className="twitter-action-btn"
-            onClick={handleNextExchange}
-            disabled={posting || loading || posts.length === 0}
-          >
-            {posting ? 'Posting…' : 'Continue thread'}
-          </button>
-          <button
-            type="button"
-            className="twitter-action-btn twitter-action-btn--ghost"
-            onClick={() => setShowProfiles(true)}
-          >
-            Profile pics
-          </button>
-          <button type="button" className="twitter-action-btn twitter-action-btn--ghost" onClick={handleReset}>
-            Reset
-          </button>
-        </div>
-      </div>
-
       {shareOk && <p className="twitter-toast twitter-toast--ok">{shareOk}</p>}
       {shareMissing && (
         <p className="debate-error twitter-error">Couldn&apos;t find that tweet — it may have been removed.</p>
@@ -489,16 +414,12 @@ export default function TwitterFeed() {
         <p className="twitter-loading">Loading feed…</p>
       ) : (
         <div className="twitter-feed" ref={feedRef}>
-          {groups.map((group) => renderThreadGroup(group, { inFeed: true }))}
+          {groups.length === 0 ? (
+            <p className="twitter-loading">No posts match your search.</p>
+          ) : (
+            groups.map((group) => renderThreadGroup(group, { inFeed: true }))
+          )}
         </div>
-      )}
-
-      {showProfiles && agents.length === 2 && (
-        <ProfilePhotos
-          agents={agents}
-          onClose={() => setShowProfiles(false)}
-          onUpdated={refreshAgents}
-        />
       )}
 
       {!openThreadGroup && (

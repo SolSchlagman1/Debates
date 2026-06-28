@@ -36,12 +36,12 @@ async function getShareBaseUrlAsync() {
 
 export async function buildThreadShareUrl(rootId) {
   const base = await getShareBaseUrlAsync()
-  return `${base}#/thread/${encodeURIComponent(rootId)}`
+  return `${base}/#/thread/${encodeURIComponent(rootId)}`
 }
 
 export async function buildTweetShareUrl(postId) {
   const base = await getShareBaseUrlAsync()
-  return `${base}#/tweet/${encodeURIComponent(postId)}`
+  return `${base}/#/tweet/${encodeURIComponent(postId)}`
 }
 
 export function parseShareRoute() {

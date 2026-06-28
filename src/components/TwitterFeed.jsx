@@ -125,11 +125,11 @@ export default function TwitterFeed() {
     clearShareRoute()
   }
 
-  useEffect(() => {
-    if (!posts.length || loading) return
-
-    const route = parseShareRoute()
-    if (!route) return
+  function resolveShareRoute(route) {
+    if (!route) {
+      setShareMissing(false)
+      return
+    }
 
     if (route.type === 'thread') {
       const group = getThreadGroup(route.id, posts)
@@ -149,7 +149,21 @@ export default function TwitterFeed() {
     } else {
       setShareMissing(true)
     }
-  }, [posts.length, loading])
+  }
+
+  useEffect(() => {
+    if (loading) return
+
+    const route = parseShareRoute()
+    if (!route) {
+      setShareMissing(false)
+      return
+    }
+
+    if (!posts.length) return
+
+    resolveShareRoute(route)
+  }, [loading, posts])
 
   useEffect(() => {
     if (!highlightPostId) return
@@ -166,20 +180,16 @@ export default function TwitterFeed() {
       if (!route) {
         setOpenThreadRootId(null)
         setHighlightPostId(null)
+        setShareMissing(false)
         return
       }
-      if (!posts.length) return
-      if (route.type === 'thread') {
-        openThreadByRootId(route.id)
-        return
-      }
-      const rootId = getRootIdForPost(route.id, posts)
-      if (rootId) openThreadByRootId(rootId, route.id)
+      if (!posts.length || loading) return
+      resolveShareRoute(route)
     }
 
     window.addEventListener('hashchange', onHashChange)
     return () => window.removeEventListener('hashchange', onHashChange)
-  }, [posts])
+  }, [loading, posts])
 
   async function handleShareThread(rootId) {
     try {
@@ -451,7 +461,7 @@ export default function TwitterFeed() {
 
       {shareOk && <p className="debate-info twitter-error">{shareOk}</p>}
       {shareMissing && (
-        <p className="debate-error twitter-error">That link is not on this feed. Share from the live site, not localhost.</p>
+        <p className="debate-error twitter-error">Couldn&apos;t find that tweet — it may have been removed.</p>
       )}
       {error && <p className="debate-error twitter-error">{error}</p>}
       {!apiOnline && <p className="debate-error twitter-error">AI backend is offline. Run: npm run dev</p>}

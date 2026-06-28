@@ -12,8 +12,11 @@ import { deleteAgent, getStorageStats, importAgents, listAgents, updateAgentAvat
 import { clearFeedPosts, insertFeedPost, listFeedPosts } from './feedDb.js'
 import { getUsageSummary } from './usageCap.js'
 import { ensureNewsTweets } from './newsTweets.js'
+import { ensureDebateAgents } from './seedAgents.js'
 
 dotenv.config({ path: join(dirname(fileURLToPath(import.meta.url)), '..', '.env') })
+
+ensureDebateAgents()
 
 const app = express()
 const PORT = process.env.PORT || 3001

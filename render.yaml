@@ -2,20 +2,14 @@ services:
   - type: web
     name: debates
     runtime: node
-    plan: starter
+    plan: free
     buildCommand: npm install --include=dev && npm run build
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
-      - key: DATA_DIR
-        value: /var/data
       - key: OPENAI_API_KEY
         sync: false
       - key: OPENAI_SPEND_CAP_USD
         value: "100"
-    disk:
-      name: debates-data
-      mountPath: /var/data
-      sizeGB: 1

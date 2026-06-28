@@ -1750,6 +1750,23 @@
   backdrop-filter: blur(12px);
 }
 
+.twitter-continue-btn {
+  margin-bottom: 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 999px;
+  background: #e7e9ea;
+  color: #000;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.twitter-continue-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .twitter-compose-row {
   display: flex;
   gap: 12px;

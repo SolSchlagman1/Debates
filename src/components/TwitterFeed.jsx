@@ -259,6 +259,25 @@ export default function TwitterFeed({ searchQuery = '' }) {
     }
   }
 
+  async function handleContinueThread() {
+    if (posting || loading || posts.length === 0 || agents.length < 2) return
+    const last = posts[posts.length - 1]
+    if (last.author === 'user') return
+
+    setError(null)
+    setPosting(true)
+
+    try {
+      const nextId = otherAgentId(agents, last.author)
+      await requestTweet(nextId, [...posts], last)
+    } catch (err) {
+      setError(err.message)
+      setApiOnline(await checkApiHealth())
+    } finally {
+      setPosting(false)
+    }
+  }
+
   async function handleUserPost() {
     const text = draft.trim()
     if (!text || posting) return
@@ -401,6 +420,14 @@ export default function TwitterFeed({ searchQuery = '' }) {
             <button
               type="button"
               className="thread-header-btn"
+              onClick={handleContinueThread}
+              disabled={posting || loading || posts.length === 0}
+            >
+              {posting ? 'Posting…' : 'Continue'}
+            </button>
+            <button
+              type="button"
+              className="thread-header-btn"
               onClick={() => handleShareThread(openThreadGroup.root.id)}
             >
               Share
@@ -424,6 +451,16 @@ export default function TwitterFeed({ searchQuery = '' }) {
 
       {!openThreadGroup && (
         <footer className="twitter-compose">
+          {posts.length > 0 && (
+            <button
+              type="button"
+              className="twitter-continue-btn"
+              onClick={handleContinueThread}
+              disabled={posting || loading}
+            >
+              {posting ? 'Posting…' : 'Continue thread'}
+            </button>
+          )}
           <div className="twitter-compose-row">
             <div className="avatar" style={{ backgroundColor: USER_PARTICIPANT.color }}>
               {USER_PARTICIPANT.name[0]}

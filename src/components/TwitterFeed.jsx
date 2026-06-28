@@ -10,6 +10,7 @@ import {
   buildTweetShareUrl,
   clearShareRoute,
   copyShareLink,
+  loadPublicUrl,
   parseShareRoute,
   setShareRoute,
 } from '../utils/shareLinks'
@@ -64,6 +65,10 @@ export default function TwitterFeed() {
   const feedRef = useRef(null)
   const threadRef = useRef(null)
   const tweetRefs = useRef({})
+
+  useEffect(() => {
+    loadPublicUrl()
+  }, [])
 
   useEffect(() => {
     let active = true
@@ -178,7 +183,7 @@ export default function TwitterFeed() {
 
   async function handleShareThread(rootId) {
     try {
-      await copyShareLink(buildThreadShareUrl(rootId))
+      await copyShareLink(await buildThreadShareUrl(rootId))
       setShareOk('Thread link copied')
       setTimeout(() => setShareOk(null), 2500)
     } catch {
@@ -188,7 +193,7 @@ export default function TwitterFeed() {
 
   async function handleShareTweet(post) {
     try {
-      await copyShareLink(buildTweetShareUrl(post.id))
+      await copyShareLink(await buildTweetShareUrl(post.id))
       setShareOk('Tweet link copied')
       setTimeout(() => setShareOk(null), 2500)
     } catch {

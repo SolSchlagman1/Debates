@@ -13,3 +13,5 @@ services:
         sync: false
       - key: OPENAI_SPEND_CAP_USD
         value: "100"
+      - key: PUBLIC_APP_URL
+        value: https://debates-uvpv.onrender.com

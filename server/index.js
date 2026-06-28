@@ -48,6 +48,12 @@ function sendApiError(res, err, logLabel) {
   res.status(status).json({ error: friendlyError(err) })
 }
 
+app.get('/api/config', (_req, res) => {
+  res.json({
+    publicUrl: process.env.PUBLIC_APP_URL || '',
+  })
+})
+
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true })
 })

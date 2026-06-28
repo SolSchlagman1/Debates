@@ -1,14 +1,47 @@
 export function getShareBaseUrl() {
+  if (cachedPublicUrl) return cachedPublicUrl
   if (typeof window === 'undefined') return ''
-  return `${window.location.origin}${window.location.pathname}`
+  return `${window.location.origin}${window.location.pathname}`.replace(/\/$/, '')
 }
 
-export function buildThreadShareUrl(rootId) {
-  return `${getShareBaseUrl()}#/thread/${encodeURIComponent(rootId)}`
+let cachedPublicUrl = null
+let publicUrlPromise = null
+
+export async function loadPublicUrl() {
+  if (cachedPublicUrl) return cachedPublicUrl
+  if (!publicUrlPromise) {
+    publicUrlPromise = (async () => {
+      try {
+        const res = await fetch('/api/config')
+        if (res.ok) {
+          const data = await res.json()
+          if (data.publicUrl) {
+            cachedPublicUrl = String(data.publicUrl).replace(/\/$/, '')
+            return cachedPublicUrl
+          }
+        }
+      } catch {
+        // fall back to current origin
+      }
+      return null
+    })()
+  }
+  return publicUrlPromise
 }
 
-export function buildTweetShareUrl(postId) {
-  return `${getShareBaseUrl()}#/tweet/${encodeURIComponent(postId)}`
+async function getShareBaseUrlAsync() {
+  const publicUrl = await loadPublicUrl()
+  return publicUrl || getShareBaseUrl()
+}
+
+export async function buildThreadShareUrl(rootId) {
+  const base = await getShareBaseUrlAsync()
+  return `${base}#/thread/${encodeURIComponent(rootId)}`
+}
+
+export async function buildTweetShareUrl(postId) {
+  const base = await getShareBaseUrlAsync()
+  return `${base}#/tweet/${encodeURIComponent(postId)}`
 }
 
 export function parseShareRoute() {

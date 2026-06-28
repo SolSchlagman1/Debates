@@ -460,10 +460,16 @@ export default function TwitterFeed() {
             <h2 className="thread-view-title">Thread</h2>
             <button
               type="button"
-              className="thread-share-btn"
+              className="thread-header-btn"
               onClick={() => handleShareThread(openThreadGroup.root.id)}
             >
-              Share
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  fill="currentColor"
+                  d="M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.29 3.3-1.41-1.42L12 2.59zM5 18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-2h2v2c0 2.21-1.79 4-4 4H7c-2.21 0-4-1.79-4-4v-2h2v2z"
+                />
+              </svg>
+              <span>Share</span>
             </button>
           </header>
           <div className="thread-view-body" ref={threadRef}>

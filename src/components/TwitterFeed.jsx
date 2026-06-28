@@ -59,6 +59,7 @@ export default function TwitterFeed() {
   const [openThreadRootId, setOpenThreadRootId] = useState(null)
   const [showProfiles, setShowProfiles] = useState(false)
   const [shareOk, setShareOk] = useState(null)
+  const [shareMissing, setShareMissing] = useState(false)
   const [highlightPostId, setHighlightPostId] = useState(null)
   const feedRef = useRef(null)
   const threadRef = useRef(null)
@@ -127,12 +128,22 @@ export default function TwitterFeed() {
 
     if (route.type === 'thread') {
       const group = getThreadGroup(route.id, posts)
-      if (group) openThreadByRootId(route.id)
+      if (group) {
+        setShareMissing(false)
+        openThreadByRootId(route.id)
+      } else {
+        setShareMissing(true)
+      }
       return
     }
 
     const rootId = getRootIdForPost(route.id, posts)
-    if (rootId) openThreadByRootId(rootId, route.id)
+    if (rootId) {
+      setShareMissing(false)
+      openThreadByRootId(rootId, route.id)
+    } else {
+      setShareMissing(true)
+    }
   }, [posts.length, loading])
 
   useEffect(() => {
@@ -434,6 +445,9 @@ export default function TwitterFeed() {
       </div>
 
       {shareOk && <p className="debate-info twitter-error">{shareOk}</p>}
+      {shareMissing && (
+        <p className="debate-error twitter-error">That link is not on this feed. Share from the live site, not localhost.</p>
+      )}
       {error && <p className="debate-error twitter-error">{error}</p>}
       {!apiOnline && <p className="debate-error twitter-error">AI backend is offline. Run: npm run dev</p>}
 

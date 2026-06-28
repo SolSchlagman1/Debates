@@ -311,14 +311,22 @@ const rootDir = join(dirname(fileURLToPath(import.meta.url)), '..')
 const publicDir = join(rootDir, 'public')
 const distDir = join(rootDir, 'dist')
 
+if (existsSync(distDir)) {
+  app.use(express.static(distDir, { index: false }))
+}
+
 if (existsSync(publicDir)) {
-  app.use(express.static(publicDir))
+  app.use(express.static(publicDir, { index: false }))
 }
 
 if (existsSync(distDir)) {
-  app.use(express.static(distDir))
-  app.get(/^(?!\/api).*/, (_req, res) => {
-    res.sendFile(join(distDir, 'index.html'))
+  app.get(/^(?!\/api).*/, (req, res, next) => {
+    if (/\.[a-zA-Z0-9]+$/.test(req.path)) {
+      return res.status(404).type('text/plain').send('Not found')
+    }
+    res.sendFile(join(distDir, 'index.html'), (err) => {
+      if (err) next(err)
+    })
   })
 }
 

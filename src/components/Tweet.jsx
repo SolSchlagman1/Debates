@@ -112,12 +112,14 @@ export default function Tweet({
           </a>
         )}
 
-        {!isPending && (
+        {!isPending && (canReply || onShare) && (
           <div className="tweet-actions">
             {canReply && onReply && (
               <button
                 type="button"
-                className="tweet-action-btn"
+                className="tweet-action-btn tweet-action-btn--reply"
+                aria-label="Reply"
+                title="Reply"
                 onClick={(e) => {
                   e.stopPropagation()
                   onReply(post)
@@ -129,13 +131,14 @@ export default function Tweet({
                     d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h3.516v1.7l5.249-2.91c1.902-1.05 3.094-3.02 3.094-5.15 0-3.37-2.77-6.13-8.129-6.13H9.756z"
                   />
                 </svg>
-                <span>Reply</span>
               </button>
             )}
             {onShare && (
               <button
                 type="button"
-                className="tweet-action-btn"
+                className="tweet-action-btn tweet-action-btn--share"
+                aria-label="Copy link"
+                title="Copy link"
                 onClick={(e) => {
                   e.stopPropagation()
                   onShare()
@@ -144,10 +147,9 @@ export default function Tweet({
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path
                     fill="currentColor"
-                    d="M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.29 3.3-1.41-1.42L12 2.59zM5 18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-2h2v2c0 2.21-1.79 4-4 4H7c-2.21 0-4-1.79-4-4v-2h2v2z"
+                    d="M18 7h-1V6a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v7a4 4 0 0 0 4 4h1v-1H7a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v1zm-4 5h1a4 4 0 0 1 4 4v7a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-7a4 4 0 0 1 4-4h1v1H7a3 3 0 0 0-3 3v7a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-7a3 3 0 0 0-3-3h-1v-1z"
                   />
                 </svg>
-                <span>Share</span>
               </button>
             )}
           </div>

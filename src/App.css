@@ -1617,8 +1617,21 @@
 }
 
 .thread-header-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
+}
+
+.thread-header-btn--icon {
+  width: 34px;
+  height: 34px;
+  justify-content: center;
+  padding: 0;
+  color: #71767b;
+}
+
+.thread-header-btn--icon:hover {
+  color: #1d9bf0;
+  background: rgba(29, 155, 240, 0.1);
 }
 
 .thread-back-btn {
@@ -1695,34 +1708,52 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-top: 8px;
-  max-width: 360px;
+  margin-top: 2px;
+  margin-left: -10px;
 }
 
 .tweet-action-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
   border: none;
   border-radius: 999px;
   background: transparent;
   color: #71767b;
-  font-size: 13px;
-  font-weight: 500;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
 }
 
 .tweet-action-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
 }
 
-.tweet-action-btn:hover {
-  background: rgba(29, 155, 240, 0.1);
+.tweet-action-btn--reply:hover {
   color: #1d9bf0;
+  background: rgba(29, 155, 240, 0.1);
+}
+
+.tweet-action-btn--share:hover {
+  color: #1d9bf0;
+  background: rgba(29, 155, 240, 0.1);
+}
+
+.twitter-toast {
+  margin: 0;
+  padding: 10px 16px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.twitter-toast--ok {
+  color: #00ba7c;
+  background: rgba(0, 186, 124, 0.08);
+  border-bottom: 1px solid rgba(0, 186, 124, 0.2);
 }
 
 .twitter-compose {

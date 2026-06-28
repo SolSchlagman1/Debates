@@ -459,7 +459,7 @@ export default function TwitterFeed() {
         </div>
       </div>
 
-      {shareOk && <p className="debate-info twitter-error">{shareOk}</p>}
+      {shareOk && <p className="twitter-toast twitter-toast--ok">{shareOk}</p>}
       {shareMissing && (
         <p className="debate-error twitter-error">Couldn&apos;t find that tweet — it may have been removed.</p>
       )}
@@ -475,16 +475,17 @@ export default function TwitterFeed() {
             <h2 className="thread-view-title">Thread</h2>
             <button
               type="button"
-              className="thread-header-btn"
+              className="thread-header-btn thread-header-btn--icon"
+              aria-label="Copy link"
+              title="Copy link"
               onClick={() => handleShareThread(openThreadGroup.root.id)}
             >
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path
                   fill="currentColor"
-                  d="M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.29 3.3-1.41-1.42L12 2.59zM5 18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-2h2v2c0 2.21-1.79 4-4 4H7c-2.21 0-4-1.79-4-4v-2h2v2z"
+                  d="M18 7h-1V6a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v7a4 4 0 0 0 4 4h1v-1H7a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v1zm-4 5h1a4 4 0 0 1 4 4v7a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-7a4 4 0 0 1 4-4h1v1H7a3 3 0 0 0-3 3v7a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-7a3 3 0 0 0-3-3h-1v-1z"
                 />
               </svg>
-              <span>Share</span>
             </button>
           </header>
           <div className="thread-view-body" ref={threadRef}>
